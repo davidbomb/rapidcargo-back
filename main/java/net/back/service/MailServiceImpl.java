@@ -1,6 +1,5 @@
 package net.back.service;
 
-import net.back.JwtFilter;
 import net.back.constantes.AppConstantes;
 import net.back.constantes.ConstantesGenerateDocument;
 import net.back.model.Mouvement;
@@ -39,53 +38,13 @@ public class MailServiceImpl implements MailService {
     private JavaMailSender mailSender;
 
     @Autowired
-    private JwtFilter jwtFilter;
-
-    @Autowired
     private MouvementRepository mouvementRepository;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-//    /**
-//     * The method send a mail
-//     *
-//     * @param mailRequest: the mail request to send
-//     * @return a response entity containing a Boolean (true if it is correctly send, false if not)
-//     */
-//    @Override
-//    public ResponseEntity<Boolean> sendHTMLMailsFromMailRequest(MailRequest mailRequest) {
-//        MimeMessagePreparator messagePreparator = mimeMessage -> {
-//            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
-//            messageHelper.setFrom(jwtFilter.userConnected.getUsername());
-//            messageHelper.setTo(mailRequest.getTo());
-//            messageHelper.setSubject(mailRequest.getSubject());
-//            messageHelper.setText(mailRequest.getBody(), true);
-//        };
-//        try {
-//            mailSender.send(messagePreparator);
-//            logger.info("sendHTMLMailsFromMailRequest | Mail envoyé avec succès");
-//            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-//        } catch (MailException e) {
-//        	logger.error("sendHTMLMailsFromMailRequest | Une erreur est survenue lors de l'envoi du mail : " + e.getMessage());
-//        	e.printStackTrace();
-//        	return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-//    @Override
-//    public ResponseEntity<MailRequest> getMailRequest(String to, String subject, String body) {
-//        MimeMessagePreparator messagePreparator = mimeMessage -> {
-//            MailRequest mail = new MailRequest();
-//            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, CharEncoding.UTF_8);
-//            messageHelper.setFrom("david.pignato@gmail.com");
-//            messageHelper.setTo(mail.getTo());
-//            messageHelper.setSubject(mail.getSubject());
-//            messageHelper.setText(mail.getBody(), true);
-//        };
-//    }
 
     /**
-     * The method send a mail with attachment
+     * The method send a mail with an attachment
      *
      * @param mailRequest: the mail request to send
      * @return a response entity containing a Boolean (true if it is correctly send, false if not)
@@ -99,10 +58,9 @@ public class MailServiceImpl implements MailService {
             logger.debug("sendHTMLMailsFromMailRequest ");
             messageHelper.setFrom("no-reply@cdg.fr");
             messageHelper.setTo(to);
-//            messageHelper.setTo(to);
             messageHelper.setText("Un nouveau mouvement a été enregistré depuis le manager de mouvement.");
             messageHelper.setSubject("Mouvement Infos");
-            messageHelper.addAttachment("att.xml", new FileDataSource("att.xml"));
+            messageHelper.addAttachment("attachment.xml", new FileDataSource("attachment.xml"));
         };
 
         try {
@@ -117,35 +75,7 @@ public class MailServiceImpl implements MailService {
         }
     }
 
-    /**
-     * The method send a mail with attachment
-     *
-     * @param mailRequest: the mail request to send
-     * @param fileName:    the file name of the attachment
-     * @return a response entity containing a Boolean (true if it is correctly send, false if not)
-     */
-    @Override
-    public ResponseEntity<Boolean> sendHTMLMailsFromMailRequestWithAttachment(MailRequest mailRequest, String fileName, ByteArrayOutputStream data) {
-        MimeMessagePreparator messagePreparator = mimeMessage -> {
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, CharEncoding.UTF_8);
-            //MimeBodyPart attachment = new MimeBodyPart();
-            logger.debug("sendHTMLMailsFromMailRequest | From/To username : " + jwtFilter.userConnected.getUsername());
-            messageHelper.setFrom(AppConstantes.INNOVATHEQUE_NO_REPLY_EMAIL);
-            messageHelper.setTo(jwtFilter.userConnected.getUsername());
-            messageHelper.setSubject(mailRequest.getSubject());
-            messageHelper.setText(mailRequest.getBody(), true);
-            messageHelper.addAttachment(fileName + "." + ConstantesGenerateDocument.ZIP_EXTENSION, new ByteArrayDataSource(data.toByteArray(), ConstantesGenerateDocument.ZIP_CONTENT_TYPE));
-        };
-        try {
-            mailSender.send(messagePreparator);
-            logger.info("sendHTMLMailsFromMailRequest | Mail envoyé avec succès");
-            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-        } catch (MailException e) {
-            logger.error("sendHTMLMailsFromMailRequest | Une erreur est survenue lors de l'envoi du mail : " + e.getMessage());
-            e.printStackTrace();
-            return new ResponseEntity<Boolean>(false, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+
 
 
     /**
@@ -156,7 +86,7 @@ public class MailServiceImpl implements MailService {
         logger.info("createMessage | create the message attachement describing the mouvement | " + m.getTypeMouvement());
         String messageID = UUID.randomUUID().toString();
         String currentDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date());
-        try (PrintWriter out = new PrintWriter("att.xml")) {
+        try (PrintWriter out = new PrintWriter("attachment.xml")) {
             if(m.getTypeMouvement().equals("ENTREE")) {
                 logger.info("preparing attachement | mouvement entree | "+ m.toString());
                 out.println(
