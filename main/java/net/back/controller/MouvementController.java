@@ -4,7 +4,6 @@ package net.back.controller;
 import net.back.exceptions.InvalidMouvementSortieException;
 import net.back.model.Mouvement;
 import net.back.service.MouvementService;
-import net.back.vo.MouvementDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,9 @@ public class MouvementController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     *
-     * @return
+     * Retriees all mouvements
+     * Test purpose only
+     * @return a list of mouvements
      */
     @RequestMapping(value = "/api-rest/mouvements", method = RequestMethod.GET)
     public ResponseEntity<List<Mouvement>> getAllMouvements() {
@@ -35,7 +35,7 @@ public class MouvementController {
     }
 
     /**
-     *
+     * retrieves the 50 last mouvements saved in the database
      * @return
      */
     @RequestMapping(value = "/api-rest/mouvements/last", method = RequestMethod.GET)
@@ -46,24 +46,24 @@ public class MouvementController {
     }
 
     /**
-     *
-     * @param mouvement
+     * saves a mouvement entree
+     * @param mouvement: the mvt about to be saved
      * @return
      */
     @RequestMapping(value = "/api-rest/mouvements/entree", method = RequestMethod.POST)
-    public ResponseEntity<MouvementDTO> saveMouvementEntree(@RequestBody MouvementDTO mouvement) {
+    public ResponseEntity<Mouvement> saveMouvementEntree(@RequestBody Mouvement mouvement) {
         logger.info("saveMouvementEntree | saves a mouvement entree: " + mouvement);
         return mouvementService.saveMouvementEntree(mouvement);
     }
 
     /**
-     *
-     * @param mouvement
+     * saves a mouvement sortie
+     * @param mouvement: the mvt about to be saved
      * @return
      * @throws InvalidMouvementSortieException
      */
     @RequestMapping(value = "/api-rest/mouvements/sortie", method = RequestMethod.PUT)
-    public ResponseEntity<MouvementDTO> saveMouvementSortie(@RequestBody MouvementDTO mouvement) throws InvalidMouvementSortieException {
+    public ResponseEntity<Mouvement> saveMouvementSortie(@RequestBody Mouvement mouvement) throws InvalidMouvementSortieException {
         logger.info("saveMouvementSortie | saves a mouvement sortie: " + mouvement);
         return mouvementService.saveMouvementSortie(mouvement);
     }

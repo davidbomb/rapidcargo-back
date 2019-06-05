@@ -10,6 +10,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface MailService {
     public ResponseEntity<Boolean> sendHTMLMails(Mouvement mouvement, String receiver);
-    
-    public ResponseEntity<Boolean> sendHTMLMailsFromMailRequestWithAttachment(MailRequest mailRequest, String fileName, ByteArrayOutputStream data);
+
 }

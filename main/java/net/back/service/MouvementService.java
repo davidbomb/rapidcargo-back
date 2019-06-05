@@ -14,7 +14,7 @@ public interface MouvementService {
 
     public ResponseEntity<List<Mouvement>> get50LastMouvements();
 
-    public ResponseEntity<MouvementDTO> saveMouvementEntree(MouvementDTO mouvement);
+    public ResponseEntity<Mouvement> saveMouvementEntree(Mouvement mouvement);
 
-    public ResponseEntity<MouvementDTO> saveMouvementSortie(MouvementDTO mouvement) throws InvalidMouvementSortieException;
+    public ResponseEntity<Mouvement> saveMouvementSortie(Mouvement mouvement) throws InvalidMouvementSortieException;
 }

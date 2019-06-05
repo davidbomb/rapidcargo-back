@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Table(name = "mouvement")
 public class Mouvement {
 
-    private static final long serialVersionUID = 1L;
+//    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +45,12 @@ public class Mouvement {
 
     @Column(name="type_mouvement")
     private String typeMouvement;
+
+    @Column(name="magasin_origine")
+    private String magasinOrigine;
+
+    @Column(name="magasin_destination")
+    private String magasinDestination;
 
 
     public Long getId() {
@@ -125,6 +131,22 @@ public class Mouvement {
 
     public void setTypeMouvement(String typeMouvement) {
         this.typeMouvement = typeMouvement;
+    }
+
+    public String getMagasinOrigine() {
+        return magasinOrigine;
+    }
+
+    public void setMagasinOrigine(String magasinOrigine) {
+        this.magasinOrigine = magasinOrigine;
+    }
+
+    public String getMagasinDestination() {
+        return magasinDestination;
+    }
+
+    public void setMagasinDestination(String magasinDestination) {
+        this.magasinDestination = magasinDestination;
     }
 
     @Override

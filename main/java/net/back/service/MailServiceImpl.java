@@ -1,10 +1,8 @@
 package net.back.service;
 
-import net.back.constantes.AppConstantes;
-import net.back.constantes.ConstantesGenerateDocument;
+
 import net.back.model.Mouvement;
 import net.back.repositories.MouvementRepository;
-import net.back.vo.MailRequest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -18,7 +16,6 @@ import javax.activation.FileDataSource;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.CharEncoding;
-import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,10 +40,11 @@ public class MailServiceImpl implements MailService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
+
     /**
      * The method send a mail with an attachment
-     *
-     * @param mailRequest: the mail request to send
+     * @param mouvement
+     * @param receiver
      * @return a response entity containing a Boolean (true if it is correctly send, false if not)
      */
     @Override
@@ -94,7 +92,7 @@ public class MailServiceImpl implements MailService {
                             "<Header from=\"RAPIDCARGO\" to=\"CARGOINFO\" messageTime=\"" + currentDate + " messageId=\""+ messageID + "\"/>\n" +
                             "<WarehouseMovementIn>\n" +
                             "<movementTime>"+ currentDate + " </movementTime>\n" +
-                            "<declaredIn code=\""+ m.getCodeLibelle() + "\" label=\"RapidCargo CDG\"/>\n" +
+                            "<declaredIn code=\""+ m.getCodeLibelle() + "\" label=\"" + m.getLieuDeclaration() + "\"/>\n" +
                             "<from code=\"CDGAF1\" label=\"Air Cargo CDG 1\"/>\n" +
                             "<goods>\n" +
                             "<ref type=\""+ m.getInfosMarchandise().getTypeReference() + "\" code=\""+ m.getInfosMarchandise().getReference() + "\"/>\n" +
@@ -114,7 +112,7 @@ public class MailServiceImpl implements MailService {
                         "<Header from=\"RAPIDCARGO\" to=\"CARGOINFO\" messageTime=\"" + currentDate + " messageId=\""+ messageID + "\"/>\n" +
                         "<WarehouseMovementOut>\n" +
                         "<movementTime>"+ currentDate + " </movementTime>\n" +
-                        "<declaredIn code=\""+ m.getCodeLibelle() + "\" label=\"RapidCargo CDG\"/>\n" +
+                        "<declaredIn code=\""+ m.getCodeLibelle() + "\" label=\"" + m.getLieuDeclaration() + "\"/>\n" +
                         "<to code=\"CDGAF1\" label=\"Air Cargo CDG 1\"/>\n" +
                         "<goods>\n" +
                         "<ref type=\""+ m.getInfosMarchandise().getTypeReference() + "\" code=\""+ m.getInfosMarchandise().getReference() + "\"/>\n" +

@@ -4,11 +4,8 @@ package net.back.service;
 import net.back.exceptions.InvalidMouvementSortieException;
 import net.back.model.InfosMarchandise;
 import net.back.model.Mouvement;
-import net.back.model.MouvementEntree;
 import net.back.repositories.InfosMarchandiseRepository;
-import net.back.repositories.MouvementEntreeRepository;
 import net.back.repositories.MouvementRepository;
-import net.back.vo.MouvementDTO;
 import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +44,7 @@ public class MouvementServiceImpl implements MouvementService {
         return new ResponseEntity<List<Mouvement>>(allMove, HttpStatus.OK);
     }
 
+    @Override
     public ResponseEntity<List<Mouvement>> get50LastMouvements() {
         List<Mouvement> mouvements = mouvementRepository.find50LastMouvements(new PageRequest(0, 50));
         logger.info("get50LastMouvements | All Movements number: "+ mouvements.size());
@@ -60,34 +58,33 @@ public class MouvementServiceImpl implements MouvementService {
 
 
     @Override
-    public ResponseEntity<MouvementDTO> saveMouvementEntree(MouvementDTO mvt) {
-        /**
-         * TODO
-         * Verification mouvement conforme aux RG
-         * throw exceptions if not
-         */
+    public ResponseEntity<Mouvement> saveMouvementEntree(Mouvement mvt) {
+
         mvt.setDateCreation(LocalDate.now());
         mvt.setUserCreation("default");
-        mvt.setCodeLibelle("5136555");
+        mvt.setCodeLibelle("7894225");
         mvt.setTypeMouvement("ENTREE");
-        mvt.setStatutDouanier("CDC");
-
-
-        Mouvement mvtSaved = mouvementRepository.save(mapper.map(mvt, Mouvement.class));
+        mvt.setDateMouvement(LocalDate.now());
+        Mouvement mvtSaved = mouvementRepository.save(mvt);
         mailService.sendHTMLMails(mvtSaved,"david.pignato@atos.net");
         logger.info("saveMouvementEntree | mouvement saved with success");
-        return new ResponseEntity<MouvementDTO>(mapper.map(mvtSaved, MouvementDTO.class), HttpStatus.OK);
+        return new ResponseEntity<Mouvement>(mvt, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<MouvementDTO> saveMouvementSortie(MouvementDTO mvt) throws InvalidMouvementSortieException {
-        if(!isMouvementSortieValid(mapper.map(mvt, Mouvement.class))){
+    public ResponseEntity<Mouvement> saveMouvementSortie(Mouvement mvt) throws InvalidMouvementSortieException {
+        if(!isMouvementSortieValidBis(mvt)){
             throw new InvalidMouvementSortieException("Le mouvement d'entrée correspondant n'existe pas");
         }
-        Mouvement mvtSaved = mouvementRepository.save(mapper.map(mvt, Mouvement.class));
+        mvt.setDateCreation(LocalDate.now());
+        mvt.setUserCreation("default");
+        mvt.setCodeLibelle("7895232");
+        mvt.setTypeMouvement("SORTIE");
+        mvt.setDateMouvement(LocalDate.now());
+        Mouvement mvtSaved = mouvementRepository.save(mvt);
         mailService.sendHTMLMails(mvtSaved,"david.pignato@atos.net");
         logger.info("saveMouvementSortie | mouvement saved with success");
-        return new ResponseEntity<MouvementDTO>(mapper.map(mvtSaved, MouvementDTO.class), HttpStatus.OK);
+        return new ResponseEntity<Mouvement>(mvtSaved, HttpStatus.OK);
     }
 
 
@@ -95,9 +92,20 @@ public class MouvementServiceImpl implements MouvementService {
     /** Fonctions relatives aux regles de gestion **/
 
 
-    private Boolean isMouvementSortieValid(Mouvement mvt){
-        Long idMarchandise = mvt.getInfosMarchandise().getId();
-        InfosMarchandise infosMarchandise = infosMarchandiseRepository.findOne(idMarchandise);
+//    private Boolean isMouvementSortieValid(Mouvement mvt){
+//        Long idMarchandise = mvt.getInfosMarchandise().getId();
+//        InfosMarchandise infosMarchandise = infosMarchandiseRepository.findOne(idMarchandise);
+//        if(infosMarchandise == null) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
+
+    private Boolean isMouvementSortieValidBis(Mouvement mvt){
+        String reference = mvt.getInfosMarchandise().getReference();
+        String typeReference = mvt.getInfosMarchandise().getTypeReference();
+        InfosMarchandise infosMarchandise = infosMarchandiseRepository.findByReference(reference, typeReference);
         if(infosMarchandise == null) {
             return false;
         } else {

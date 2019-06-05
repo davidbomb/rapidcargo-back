@@ -21,6 +21,12 @@ public class MailController {
     private MailService mailService;
 
 
+    /**
+     * TEST purpose only
+     * @param mouvement
+     * @param receiver: string email address of the receiver
+     * @return
+     */
     @RequestMapping(value = "/mail/send", method = RequestMethod.GET)
     public ResponseEntity<Boolean> sendMails(Mouvement mouvement, String receiver) {
         return mailService.sendHTMLMails(mouvement, "test");
